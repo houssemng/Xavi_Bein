@@ -1,0 +1,572 @@
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&display=swap');
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --green: #00C853;
+    --green-dim: #00963d;
+    --dark: #0a0f0d;
+    --card: #121a14;
+    --card2: #1a2420;
+    --border: rgba(0,200,83,0.15);
+    --text: #e8f5e9;
+    --muted: #7a9e82;
+    --live: #ff3d3d;
+    --radius: 10px;
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--dark);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
+
+  header {
+    background: #0d1410;
+    border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 26px;
+    letter-spacing: 2px;
+    color: var(--green);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .logo span { color: var(--text); }
+
+  .live-badge {
+    background: var(--live);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 7px;
+    border-radius: 4px;
+    letter-spacing: 1px;
+    animation: pulse-badge 1.5s infinite;
+  }
+
+  @keyframes pulse-badge {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+  }
+
+  nav {
+    display: flex;
+    gap: 6px;
+  }
+  nav button {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'DM Sans', sans-serif;
+  }
+  nav button.active, nav button:hover {
+    background: var(--green);
+    color: #000;
+    border-color: var(--green);
+    font-weight: 600;
+  }
+
+  main { padding: 24px; max-width: 1200px; margin: 0 auto; }
+
+  #player-section {
+    display: none;
+    margin-bottom: 28px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  #player-section.visible { display: block; animation: fadeIn 0.3s ease; }
+
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+
+  .player-header {
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+    background: var(--card2);
+  }
+  .player-match-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    letter-spacing: 1px;
+    color: var(--text);
+  }
+  .player-close {
+    background: transparent;
+    border: 1px solid rgba(255,60,60,0.3);
+    color: #ff6b6b;
+    padding: 4px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .player-close:hover { background: rgba(255,60,60,0.1); }
+
+  .player-wrap {
+    position: relative;
+    padding-bottom: 56.25%;
+    height: 0;
+    background: #000;
+  }
+  .player-wrap iframe {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    border: none;
+  }
+  .player-loading {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 12px;
+    background: #050907;
+    color: var(--muted);
+    font-size: 14px;
+  }
+  .spinner {
+    width: 36px; height: 36px;
+    border: 3px solid var(--border);
+    border-top-color: var(--green);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .stream-tabs {
+    padding: 12px 20px;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    background: #0f1a12;
+    border-top: 1px solid var(--border);
+  }
+  .stream-tab {
+    background: var(--card2);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    padding: 5px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.2s;
+  }
+  .stream-tab:hover { border-color: var(--green); color: var(--text); }
+  .stream-tab.active { background: var(--green); color: #000; border-color: var(--green); font-weight: 600; }
+  .hd-dot { display: inline-block; width: 6px; height: 6px; background: var(--green); border-radius: 50%; margin-left: 4px; vertical-align: middle; }
+
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 1.5px;
+    color: var(--text);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .matches-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 14px;
+  }
+
+  .match-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .match-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--green), transparent);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .match-card:hover { border-color: rgba(0,200,83,0.4); transform: translateY(-2px); }
+  .match-card:hover::before { opacity: 1; }
+  .match-card.is-live { border-color: rgba(255,61,61,0.3); }
+  .match-card.is-live::before { background: linear-gradient(90deg, var(--live), transparent); opacity: 1; }
+
+  .card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+  }
+  .card-competition {
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+  }
+  .card-status {
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 4px;
+    letter-spacing: 0.5px;
+  }
+  .status-live { background: rgba(255,61,61,0.15); color: var(--live); border: 1px solid rgba(255,61,61,0.3); }
+  .status-soon { background: rgba(0,200,83,0.1); color: var(--green); border: 1px solid rgba(0,200,83,0.2); }
+
+  .teams-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .team {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    flex: 1;
+    min-width: 0;
+  }
+  .team-badge {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    background: var(--card2);
+    border: 1px solid var(--border);
+    object-fit: contain;
+    padding: 4px;
+  }
+  .team-badge-placeholder {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    background: var(--card2);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 15px;
+    color: var(--muted);
+    flex-shrink: 0;
+  }
+  .team-name {
+    font-size: 12px;
+    font-weight: 500;
+    text-align: center;
+    color: var(--text);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 100%;
+  }
+  .vs-divider {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 16px;
+    color: var(--muted);
+    flex-shrink: 0;
+  }
+
+  .card-time {
+    font-size: 11px;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .watch-btn {
+    width: 100%;
+    margin-top: 10px;
+    background: transparent;
+    border: 1px solid rgba(0,200,83,0.3);
+    color: var(--green);
+    padding: 8px;
+    border-radius: 7px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.2s;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+  .watch-btn:hover { background: var(--green); color: #000; border-color: var(--green); }
+  .watch-btn i { font-size: 14px; }
+
+  .empty-state {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--muted);
+  }
+  .empty-state i { font-size: 48px; margin-bottom: 12px; display: block; opacity: 0.3; }
+
+  .skeleton {
+    background: linear-gradient(90deg, var(--card) 25%, var(--card2) 50%, var(--card) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: 6px;
+  }
+  @keyframes shimmer { to { background-position: -200% 0; } }
+  .skel-card { height: 160px; border-radius: var(--radius); }
+
+  footer {
+    text-align: center;
+    padding: 32px 24px 24px;
+    color: var(--muted);
+    font-size: 12px;
+    border-top: 1px solid var(--border);
+    margin-top: 40px;
+  }
+  footer a { color: var(--green); text-decoration: none; }
+</style>
+
+<h2 class="sr-only">GoalStream — live football match streaming website</h2>
+
+<header>
+  <div class="logo">Goal<span>Stream</span> <span class="live-badge">LIVE</span></div>
+  <nav>
+    <button class="active" onclick="setFilter('live', this)">🔴 Live</button>
+    <button onclick="setFilter('today', this)">📅 Today</button>
+    <button onclick="setFilter('all', this)">All Football</button>
+  </nav>
+</header>
+
+<main>
+  <section id="player-section">
+    <div class="player-header">
+      <div class="player-match-title" id="player-title">Match Title</div>
+      <button class="player-close" onclick="closePlayer()">✕ Close</button>
+    </div>
+    <div class="player-wrap">
+      <div class="player-loading" id="player-loading">
+        <div class="spinner"></div>
+        <span>Loading stream…</span>
+      </div>
+      <iframe id="main-iframe" allowfullscreen allow="autoplay; fullscreen" onload="document.getElementById('player-loading').style.display='none'"></iframe>
+    </div>
+    <div class="stream-tabs" id="stream-tabs"></div>
+  </section>
+
+  <div class="section-title" id="section-label">Live Matches</div>
+  <div class="matches-grid" id="matches-grid">
+    ${Array(6).fill('<div class="skeleton skel-card"></div>').join('')}
+  </div>
+</main>
+
+<footer>
+  Powered by <a href="https://streamed.pk" target="_blank">streamed.pk</a> API &mdash; For personal use only.
+</footer>
+
+<script>
+const BASE = 'https://streamed.pk/api';
+const IMG = 'https://streamed.pk/api/images';
+let currentFilter = 'live';
+let currentStreams = [];
+let currentMatch = null;
+
+function initials(name) {
+  if (!name) return '?';
+  return name.split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase();
+}
+
+function formatTime(ts) {
+  const d = new Date(ts);
+  return d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+}
+
+function isLive(match) {
+  const now = Date.now();
+  const start = match.date;
+  return now >= start && now <= start + 2*60*60*1000;
+}
+
+async function fetchMatches(filter) {
+  const ep = filter === 'live' ? 'live' : filter === 'today' ? 'all-today' : 'football';
+  const url = `${BASE}/matches/${ep}`;
+  try {
+    const r = await fetch(url);
+    if (!r.ok) throw new Error();
+    let data = await r.json();
+    if (filter !== 'live' && filter !== 'today') {
+      data = data.filter(m => m.category === 'football');
+    }
+    return data;
+  } catch(e) {
+    return [];
+  }
+}
+
+async function loadStreams(match) {
+  if (!match.sources || match.sources.length === 0) return [];
+  const results = [];
+  for (const src of match.sources.slice(0, 3)) {
+    try {
+      const r = await fetch(`${BASE}/stream/${src.source}/${src.id}`);
+      if (!r.ok) continue;
+      const streams = await r.json();
+      if (Array.isArray(streams)) results.push(...streams);
+    } catch(e) {}
+  }
+  return results;
+}
+
+function renderBadge(badge, name) {
+  if (badge) {
+    return `<img class="team-badge" src="${IMG}/badge/${badge}.webp" alt="${name||''}" onerror="this.style.display='none';this.nextSibling.style.display='flex'">
+            <div class="team-badge-placeholder" style="display:none">${initials(name)}</div>`;
+  }
+  return `<div class="team-badge-placeholder">${initials(name)}</div>`;
+}
+
+function renderCard(match) {
+  const live = isLive(match);
+  const home = match.teams?.home;
+  const away = match.teams?.away;
+  const homeName = home?.name || match.title?.split(' vs ')[0] || 'Home';
+  const awayName = away?.name || match.title?.split(' vs ')[1] || 'Away';
+  const status = live
+    ? `<span class="card-status status-live">● LIVE</span>`
+    : `<span class="card-status status-soon">${formatTime(match.date)}</span>`;
+
+  return `
+    <div class="match-card ${live ? 'is-live' : ''}" onclick="openMatch(${JSON.stringify(match).replace(/"/g,'&quot;')})">
+      <div class="card-top">
+        <span class="card-competition">${match.category || 'Football'}</span>
+        ${status}
+      </div>
+      <div class="teams-row">
+        <div class="team">
+          ${renderBadge(home?.badge, homeName)}
+          <div class="team-name">${homeName}</div>
+        </div>
+        <div class="vs-divider">VS</div>
+        <div class="team">
+          ${renderBadge(away?.badge, awayName)}
+          <div class="team-name">${awayName}</div>
+        </div>
+      </div>
+      <button class="watch-btn" onclick="event.stopPropagation();openMatch(${JSON.stringify(match).replace(/"/g,'&quot;')})">
+        <i class="ti ti-player-play" aria-hidden="true"></i> Watch Now
+      </button>
+    </div>`;
+}
+
+async function openMatch(match) {
+  currentMatch = match;
+  const ps = document.getElementById('player-section');
+  const title = document.getElementById('player-title');
+  const iframe = document.getElementById('main-iframe');
+  const loading = document.getElementById('player-loading');
+  const tabs = document.getElementById('stream-tabs');
+
+  title.textContent = match.title || 'Match';
+  iframe.src = '';
+  loading.style.display = 'flex';
+  tabs.innerHTML = '<span style="color:var(--muted);font-size:12px">Loading streams…</span>';
+  ps.className = 'visible';
+  ps.scrollIntoView({behavior:'smooth', block:'start'});
+
+  const streams = await loadStreams(match);
+  currentStreams = streams;
+  tabs.innerHTML = '';
+
+  if (streams.length === 0) {
+    tabs.innerHTML = '<span style="color:var(--muted);font-size:12px">No streams available yet. Check back when the match goes live.</span>';
+    loading.innerHTML = '<div style="color:var(--muted);font-size:14px">No stream available</div>';
+    return;
+  }
+
+  streams.forEach((s, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'stream-tab' + (i===0?' active':'');
+    btn.innerHTML = `Stream ${s.streamNo||i+1} · ${s.language||'Unknown'}${s.hd?'<span class="hd-dot" title="HD"></span>':''}`;
+    btn.onclick = () => {
+      document.querySelectorAll('.stream-tab').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      loadStream(s.embedUrl);
+    };
+    tabs.appendChild(btn);
+  });
+
+  loadStream(streams[0].embedUrl);
+}
+
+function loadStream(url) {
+  const iframe = document.getElementById('main-iframe');
+  const loading = document.getElementById('player-loading');
+  loading.style.display = 'flex';
+  loading.innerHTML = '<div class="spinner"></div><span>Loading stream…</span>';
+  iframe.src = url;
+}
+
+function closePlayer() {
+  const ps = document.getElementById('player-section');
+  ps.className = '';
+  document.getElementById('main-iframe').src = '';
+}
+
+async function setFilter(filter, btn) {
+  document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  currentFilter = filter;
+  const labels = {live:'Live Matches', today:"Today's Matches", all:'All Football Matches'};
+  document.getElementById('section-label').textContent = labels[filter];
+  document.getElementById('matches-grid').innerHTML = Array(6).fill('<div class="skeleton skel-card"></div>').join('');
+
+  const matches = await fetchMatches(filter);
+  const grid = document.getElementById('matches-grid');
+
+  if (matches.length === 0) {
+    grid.innerHTML = `<div class="empty-state"><i class="ti ti-ball-football" aria-hidden="true"></i>No matches found right now.<br>Try "Today" or "All Football".</div>`;
+    return;
+  }
+
+  grid.innerHTML = matches.slice(0, 24).map(renderCard).join('');
+}
+
+setFilter('live', document.querySelector('nav button.active'));
+</script>
